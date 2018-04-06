@@ -2,6 +2,6 @@ import pygame
 import sys
 import GameEntity
 
-if GameEntity.gameEntity.init():
-    GameEntity.gameEntity.run()
-GameEntity.gameEntity.destroy()
+if GameEntity.instance.init():
+    GameEntity.instance.run()
+GameEntity.instance.destroy()

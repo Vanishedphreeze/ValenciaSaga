@@ -2,6 +2,7 @@ import pygame
 import sys
 from SceneBase import SceneBase
 from TestScene import TestScene
+# from BattleScene import BattleScene
 
 class GameEntity(object):
     FPS = 60
@@ -47,4 +48,4 @@ class GameEntity(object):
     def getWindowContext(self):
         return self._windowContext
 
-gameEntity = GameEntity()
+instance = GameEntity()

@@ -13,7 +13,7 @@ class SceneBase(object):
 
     def start(self):
         # prepare initial values
-        self.screen = GameEntity.gameEntity.getWindowContext()
+        self.screen = GameEntity.instance.getWindowContext()
         self.isRunning = True
 
     def update(self, events):

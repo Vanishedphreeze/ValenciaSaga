@@ -19,6 +19,8 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BattleManager.py" />
+    <Compile Include="BattleScene.py" />
     <Compile Include="Game.py" />
     <Compile Include="GameEntity.py" />
     <Compile Include="SceneBase.py" />
