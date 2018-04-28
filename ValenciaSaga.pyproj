@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{477614a6-14d1-40f0-b930-98678083b855}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Game.py</StartupFile>
+    <StartupFile>BattleTest_NoGUI.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,10 +19,28 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BattleManager.py" />
+    <Compile Include="BattleCore.py" />
     <Compile Include="BattleScene.py" />
+    <Compile Include="BattleTest_NoGUI.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Board.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CharacterBase.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BattleManager.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CMtest.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Game.py" />
     <Compile Include="GameEntity.py" />
+    <Compile Include="Player.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SceneBase.py" />
     <Compile Include="TestScene.py" />
   </ItemGroup>

@@ -1,90 +1,84 @@
+from Board import Board
+from CharacterBase import CharacterBase
+from Player import Player
+
 class BattleManager(object):
-    MAX_PLAYER = 2
+	_boardInstance = None
+	_playerList = None
 
-    # the count of turns, initial 0.
-    _turn = 0
+	# BattleManager should load after board and players
+	# player should not change during one match
+	def init(self, boardInstance, playerList):
+		if not isinstance(boardInstance, Board):
+			print("Board type mismatch")
+			return False
+		if not isinstance(playerList, tuple):
+			print("PlayerList type mismatch")
+			return False
+		for i in playerList:
+			if not isinstance(i, Player):
+				print("PlayerList type mismatch")
+				return False
 
-    # phase: 
-    # 0 draw phase, 
-    # 1 standby phase, 
-    # 2 main phase,
-    # 3 end phase.
-    _phase = 0
+		self._boardInstance = boardInstance
+		self._playerList = playerList
+		return True
 
-    # player's number
-    _player = 0
+	# playerNo depends on how we establish playerList
+	# charac.owner should be written before 
+	def summon(self, playerNo, handIndex, posOnBoard):
+		tempCharac = self._playerList[playerNo].hand[handIndex]
+		# Beware whether addCharac successful
+		if self._boardInstance.addCharac(posOnBoard, tempCharac):
+			self._playerList[playerNo].hand.pop(handIndex)
+			return True
+		else:
+			return False
 
-    # to help controlling battle coroutine
-    battleHandler = None
+	# this function judges move range
+	def move(self, pos, targetPos):
+		charac = self._boardInstance.getCharacByPos(pos)
 
-    # all these phases are coroutines
-    # we can put "required type" in "yield return" 
-    # use battleHandler.send()
-    def _drawPhase(self):
-        self._phase = 0
-        print("draw phase start.")
-        # process all effects in queue
-        # draw a card
-        self._recvOpt = yield None
-        print("draw phase end.")
+		if charac == None:
+			print("Invalid character position")
+			return False
 
-    def _standbyPhase(self):
-        self._phase = 1
-        print("standby phase start.")
-        # process all effects in queue
-        self._recvOpt = yield None
-        print("standby phase end.")
+		dist = abs(targetPos[0] - pos[0]) + abs(targetPos[1] - pos[1])
+		if charac.status["MOV"] <  dist:
+			print("Move out of range")
+			return False
+			
+		return self._boardInstance.moveCharac(pos, targetPos)
 
-    def _mainPhase(self):
-        self._phase = 2
-        print("main phase start.")
-        # process all effects in queue
-        # hang-up the battleManager, wait for input
+	# attack does not care which owner it belongs to
+	def attack(self, pos, targetPos):
+		attacker = self._boardInstance.getCharacByPos(pos)
+		target = self._boardInstance.getCharacByPos(targetPos)
 
-        # number 1 is for test
-        self._recvOpt = yield 1
+		if attacker == None or target == None:
+			print("Invalid attacker/target position")
+			return False
 
-        print("main phase end.")
+		dist = abs(targetPos[0] - pos[0]) + abs(targetPos[1] - pos[1])
+		if attacker.status["RNG"] <  dist:
+			print("Attack out of range")
+			return False
 
-    def _endPhase(self):
-        self._phase = 3
-        print("end phase start.")
-        # process all effects in queue
-        self._recvOpt = yield None
-        print("end phase end.")
+		# is this nessesary to put hpdec into a function?
+		# dead processes should be in event system
+		# this is only a physical attack
+		target.status["HP"] -= attacker.status["ATK"] - target.status["DEF"]
+		return True
+		# return self._boardInstance.moveCharac(pos, targetPos)
 
 
-    # yield from: continuously enum value from one iterator UNTIL it exhausts
-    def _battleRoutine(self):
-        print("battle start")
-        while True:
-            print("/////////////////////// player %d, turn %d start." % (self._player, self._turn))
-            yield from self._drawPhase()
-            yield from self._standbyPhase()
-            yield from self._mainPhase()
-            yield from self._endPhase()
-
-            print("/////////////////////// turn %d end." % self._turn)
-            self._player += 1
-            if self._player >= self.MAX_PLAYER:
-               self._turn += 1
-               self._player = 0
-
-    def init(self):
-        self.battleHandler = self._battleRoutine()
-
-    # same as pushForward, returns the type of the required operations
-    def start(self):
-        next(self.battleHandler) # tell coroutine to start battle
-        return self.pushForward(None) # is this dangerous to push forward here?
-        
-    # send operations and continue the battle procedure
-    # returns the type of the required operations
-    def pushForward(self, opt):
-        requiredType = self.battleHandler.send(opt) 
-        opt = None # clear opt buffer
-        while requiredType == None:
-            requiredType = self.battleHandler.send(opt) 
-        return requiredType
+	'''
+	def move(self, posOnBoard, dpos):
+		charac = self._boardInstance.characterDict[self._boardInstance.board[posOnBoard[0]][posOnBoard[1]]][1]
+		if charac.status["MOV"] >= dpos[0] + dpos[1] and self._boardInstance.board[posOnBoard[0] + dpos[0]][posOnBoard[1] + dpos[1]] == -1:
+			self._boardInstance.board
+		else:
+			print("illegal move.")
+	'''
 
 instance = BattleManager()
