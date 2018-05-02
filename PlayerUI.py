@@ -1,11 +1,11 @@
 import random
 import GameObject
 import CharacterUI
-import Board
+import Player
 import pygame
 
-class BoardUI(object):
-	characterImage = None
+class PlayerUI(object):
+	handImage = None
 	startPos = None
 	_endPos = None
 	size = None # n * m
@@ -15,7 +15,7 @@ class BoardUI(object):
     # index : (pos, character)
 	characUIDict = None
 
-	logicBoardHandler = None
+	logicPlayerHandler = None
 
 	# intend to pass value
 
@@ -39,15 +39,15 @@ class BoardUI(object):
 		self._endPos = self.startPos[0] + size[0] * step[0], self.startPos[1] + size[1] * step[1]
 	'''
 
-	def init(self, startPos, step, logicBoardHandler):
-		self.characterImage = pygame.image.load("crop.jpg")
+	def init(self, startPos, step, logicPlayerHandler):
+		self.handImage = pygame.image.load("crop.jpg")
 
-		self.logicBoardHandler = logicBoardHandler
-		if not isinstance(self.logicBoardHandler, Board.Board):
-			print("UIlayer: Board type wrong")
+		self.logicPlayerHandler = logicPlayerHandler
+		if not isinstance(self.logicPlayerHandler, Player.Player):
+			print("UIlayer: Player type wrong")
 
 		self.startPos = tuple(startPos[:])
-		self.size = (self.logicBoardHandler.WIDTH, self.logicBoardHandler.HEIGHT)
+		self.size = (self.logicPlayerHandler.MAXHAND, 1)
 		self.step = tuple(step[:])
 		self.boardUI = [[-1 for i in range(self.size[1])] for i in range(self.size[0])]
 		self.characUIDict = {}
@@ -110,13 +110,14 @@ class BoardUI(object):
 	# this is not the best solution, optimize it if necessary
 	def update(self):
 		for i in range(self.size[0]):
-			for j in range(self.size[1]):
-				self.boardUI[i][j] = self.logicBoardHandler.board[j][i]
+			self.boardUI[i][0] = -1
+		for i in range(len(self.logicPlayerHandler.hand)):
+			self.boardUI[i][0] = self.logicPlayerHandler.hand[i]
 
 		self.characUIDict = {}
 		# use CharacterUI pool if necessary
-		for (index, (pos, charac)) in self.logicBoardHandler.characDict.items():
-			self.characUIDict[index] = [[pos[1], pos[0]], CharacterUI.CharacterUI()]
-			self.characUIDict[index][1].init(self.characterImage, self.getPosOnScreen((pos[1], pos[0])), (50, 50))
+		for i in range(len(self.logicPlayerHandler.hand)):
+			self.characUIDict[i] = [(i, 0), CharacterUI.CharacterUI()]
+			self.characUIDict[i][1].init(self.handImage, self.getPosOnScreen((i, 0)), (50, 50))
 
 

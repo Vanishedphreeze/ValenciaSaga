@@ -1,6 +1,7 @@
 import Player
 import CharacterBase
 import Board
+import BattleStatus
 import BattleManager
 
 class BattleCore(object):
@@ -8,6 +9,7 @@ class BattleCore(object):
 	MAX_PLAYER = 2
 	playerList = None 
 	board = None
+	_battleStatus = None
 
 	# the count of turns, initial 0.
 	_turn = 0
@@ -25,7 +27,7 @@ class BattleCore(object):
 	battleHandler = None
 
 	# all these phases are coroutines
-	# we can put "required type" in "yield return" 
+	# yield returns required type of opts 
 	# use battleHandler.send()
 	def _drawPhase(self):
 		self._phase = 0
@@ -84,14 +86,13 @@ class BattleCore(object):
 	'''
 
 	# this function recieves opt once a time, until recieved -1 (turn end)
-	
 	def _mainPhase(self):
 		self._phase = 2
 		print("main phase start.")
 
 		while True:
 			# hang-up the BattleCore, wait for input
-			# number 1 is for test, recieving main phase operations form player
+			# return type:
 			recvOpt = yield 1
 
 			# parse & process recvOpt
@@ -168,6 +169,10 @@ class BattleCore(object):
 		for player in self.playerList:
 			player.draw(5)
 
+		# after all inits are done
+		self._battleStatus = BattleStatus.BattleStatus(self.playerList, self.board)
+
+
 
 	# same as pushForward, returns the type of the required operations
 	def start(self):
@@ -176,9 +181,14 @@ class BattleCore(object):
 			return None
 		next(self.battleHandler) # tell coroutine to start battle
 		return self.pushForward(None) # is this dangerous to push forward here?
+
+	def getBattleStatusHandler(self):
+		return self._battleStatus
 		
 	# send operations and continue the battle procedure
-	# returns the type of the required operations
+	# returns (type, status)
+	# type: the type of the required operations
+	# status: present battle status
 	def pushForward(self, opt):
 		requiredType = self.battleHandler.send(opt) 
 		opt = None # clear opt buffer

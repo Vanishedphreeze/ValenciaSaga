@@ -4,21 +4,31 @@ import GameEntity
 import GameObject
 import CharacterUI
 import BoardUI
+import PlayerUI
+import BattleCore
+import BattleStatus
 from SceneBase import SceneBase
 
 class BattleScene(SceneBase):
 	image = None
 	movingObject = None
+
 	# (index, pos, source)
+	# index: index in hand/characDict
+	# pos: original pos on screen
+	# source is the same as _cursorFocus
+	# 1 player1, 2 player2, 3 board
 	movingObjectInfo = None
+
+	status = None
 
 	# testObject = GameObject.GameObject()
 
 	cursorImage = None
 	cursor = GameObject.GameObject()
 
-	player1Hand = BoardUI.BoardUI()
-	player2Hand = BoardUI.BoardUI()
+	player1Hand = PlayerUI.PlayerUI()
+	player2Hand = PlayerUI.PlayerUI()
 	boardUI = BoardUI.BoardUI()
 
 	_cursorFocus = 0
@@ -28,32 +38,50 @@ class BattleScene(SceneBase):
 
 	def init(self):
 		super().init()
+		BattleCore.instance.init()
+		self.status = BattleCore.instance.getBattleStatusHandler()
+		if not isinstance(self.status, BattleStatus.BattleStatus):
+			print("UIlayer: BattleStatus type wrong")
+
 		self.image = pygame.image.load("crop.jpg")
 		self.cursorImage = pygame.image.load("cursor.png")
 		# self.player.init(self.image, (0, 0), (50, 50))
 		self.cursor.init(self.cursorImage, (50, 50), (50, 50))
 		# self.testObject.init(self.cursorImage, (700, 400), (60, 180))
 
-		self.boardUI.init((100, 160), (10, 5), (60, 60))
-		self.boardUI._generate(5)
-		for (index, (pos, cUI)) in self.boardUI.characUIDict.items():
-			cUI.init(self.image, self.boardUI.getPosOnScreen(pos), (50, 50))
+		# self.boardUI.obsoluted_init((100, 160), (10, 5), (60, 60))
+		self.boardUI.init((100, 160), (60, 60), self.status.board)
+		# self.boardUI._generate(5)
+		# for (index, (pos, cUI)) in self.boardUI.characUIDict.items():
+		# 	cUI.init(self.image, self.boardUI.getPosOnScreen(pos), (50, 50))
 
 		# player2 at the top
-		self.player2Hand.init((40, 50), (12, 1), (60, 60))
-		self.player2Hand._generate(5)
-		for (index, (pos, cUI)) in self.player2Hand.characUIDict.items():
-			cUI.init(self.image, self.player2Hand.getPosOnScreen(pos), (50, 50))
+		# self.player2Hand.obsoluted_init((40, 50), (12, 1), (60, 60))
+		self.player2Hand.init((40, 50), (60, 60), self.status.playerList[1])
+		# self.player2Hand._generate(5)
+		# for (index, (pos, cUI)) in self.player2Hand.characUIDict.items():
+		# 	cUI.init(self.image, self.player2Hand.getPosOnScreen(pos), (50, 50))
 
 		# player1 at the bottom
-		self.player1Hand.init((40, 500), (12, 1), (60, 60))
-		self.player1Hand._generate(5)
-		for (index, (pos, cUI)) in self.player1Hand.characUIDict.items():
-			cUI.init(self.image, self.player1Hand.getPosOnScreen(pos), (50, 50))
+		# self.player1Hand.obsoluted_init((40, 500), (12, 1), (60, 60))
+		self.player1Hand.init((40, 500), (60, 60), self.status.playerList[0])
+		# self.player1Hand._generate(5)
+		# for (index, (pos, cUI)) in self.player1Hand.characUIDict.items():
+		# 	cUI.init(self.image, self.player1Hand.getPosOnScreen(pos), (50, 50))
 
 
 	def start(self):
 		super().start()
+		BattleCore.instance.start()
+
+		# this is only for test.
+		# BattleCore.instance.pushForward( (0, (0, 0, (2, 2) ) ) )
+		# BattleCore.instance.pushForward( (0, (0, 0, (1, 2) ) ) )
+		# BattleCore.instance.pushForward( (0, (0, 0, (2, 3) ) ) )
+
+		self.boardUI.update()
+		self.player1Hand.update()
+		self.player2Hand.update()
 		# self.player.start()
 
 	def update(self, events):
@@ -64,6 +92,14 @@ class BattleScene(SceneBase):
 			if event.type == pygame.QUIT:
 				sys.exit()
 			if event.type == pygame.MOUSEBUTTONDOWN:
+
+				# right click to end the turn, use other UI later
+				if event.button == 2: 
+					BattleCore.instance.pushForward((-1, ))
+					self.boardUI.update()
+					self.player1Hand.update()
+					self.player2Hand.update()
+
 				if event.button == 1: # left button
 					for (index, (pos, cUI)) in self.player1Hand.characUIDict.items():
 						if cUI.pointCollide(event.pos):
@@ -129,6 +165,7 @@ class BattleScene(SceneBase):
 						self.movingObject.position = list(self.boardUI.getPosOnScreen(self.movingObjectInfo[1])[:])
 					'''
 
+					'''
 					if self.movingObjectInfo[2] == 1: # player1Hand
 						if self._cursorFocus == 3: # board: summon
 							# only for test
@@ -154,6 +191,68 @@ class BattleScene(SceneBase):
 						else: # illegal
 							print("UIlayer: illegal operation")
 							self.movingObject.position = list(self.boardUI.getPosOnScreen(self.movingObjectInfo[1])[:])
+					'''
+
+					if self.movingObjectInfo[2] == 1: # player1Hand
+						if self._cursorFocus == 3: # board: summon
+							# summon(playerNo, handIndex, posOnBoard)
+							print("summon from player1")
+							UIpos = self.boardUI.getPosOnBoard(event.pos)
+							BattleCore.instance.pushForward( (0, (0, self.movingObjectInfo[0],  (UIpos[1], UIpos[0]) ) ) )
+							self.boardUI.update()
+							self.player1Hand.update()
+							# self.player2Hand.update()
+						else: # illegal
+							print("UIlayer: illegal operation")
+							self.movingObject.position = list(self.player1Hand.getPosOnScreen(self.movingObjectInfo[1])[:])
+
+					elif self.movingObjectInfo[2] == 2: # player2Hand
+						if self._cursorFocus == 3: # board: summon
+							# summon(playerNo, handIndex, posOnBoard)
+							print("summon from player2")
+							UIpos = self.boardUI.getPosOnBoard(event.pos)
+							BattleCore.instance.pushForward( (0, (1, self.movingObjectInfo[0], (UIpos[1], UIpos[0]) ) ) )
+							self.boardUI.update()
+							# self.player1Hand.update()
+							self.player2Hand.update()
+
+						else: # illegal
+							print("UIlayer: illegal operation")
+							self.movingObject.position = list(self.player2Hand.getPosOnScreen(self.movingObjectInfo[1])[:])
+
+					elif self.movingObjectInfo[2] == 3: # boardUI
+						if self._cursorFocus == 3: # board: move / attack
+							# only move now
+							UIpos = self.movingObjectInfo[1]
+							UItargetPos = self.boardUI.getPosOnBoard(event.pos)
+
+							if UIpos[0] == UItargetPos[0] and UIpos[1] == UItargetPos[1]:
+								print("move / attack cancelled")
+								self.movingObject.position = list(self.boardUI.getPosOnScreen(self.movingObjectInfo[1])[:])
+
+							elif self.boardUI.boardUI[UItargetPos[0]][UItargetPos[1]] != -1:
+								print("attack")
+								# attack(pos, targetPos)
+								BattleCore.instance.pushForward( (2, ( (UIpos[1], UIpos[0]), (UItargetPos[1], UItargetPos[0]) ) ) )
+								print("//////////////////////////\nAttcker:")
+								BattleCore.instance.showStatusAtPos((UIpos[1], UIpos[0]))
+								print("//////////////////////////\nDefender:")
+								BattleCore.instance.showStatusAtPos((UItargetPos[1], UItargetPos[0]))
+								print("//////////////////////////")
+								self.boardUI.update()
+								# self.player1Hand.update()
+								# self.player2Hand.update()
+							else :
+								print("move")
+								# move(pos, targetPos)
+								BattleCore.instance.pushForward( (1, ( (UIpos[1], UIpos[0]), (UItargetPos[1], UItargetPos[0]) ) ) )
+								self.boardUI.update()
+								# self.player1Hand.update()
+								# self.player2Hand.update()
+
+						else: # illegal
+							print("UIlayer: illegal operation")
+							self.movingObject.position = list(self.boardUI.getPosOnScreen(self.movingObjectInfo[1])[:])
 
 					# used when single
 					'''
@@ -171,6 +270,7 @@ class BattleScene(SceneBase):
 					'''
 
 					self.movingObject = None
+					self.movingObjectInfo = None
 
 
 		# print(self.mousepos)
