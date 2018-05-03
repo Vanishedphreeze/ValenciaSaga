@@ -5,17 +5,18 @@ import Player
 import pygame
 
 class PlayerUI(object):
-	handImage = None
-	startPos = None
-	_endPos = None
-	size = None # n * m
-	step = None
+	def __init__(self):
+		self.handImage = None
+		self.startPos = None
+		self._endPos = None
+		self.size = None # n * m
+		self.step = None
 
-	boardUI = None
-    # index : (pos, character)
-	characUIDict = None
+		self.boardUI = None
+	    # index : (pos, character)
+		self.characUIDict = None
 
-	logicPlayerHandler = None
+		self.logicPlayerHandler = None
 
 	# intend to pass value
 
@@ -47,7 +48,7 @@ class PlayerUI(object):
 			print("UIlayer: Player type wrong")
 
 		self.startPos = tuple(startPos[:])
-		self.size = (self.logicPlayerHandler.MAXHAND, 1)
+		self.size = (Player.Player.MAXHAND, 1)
 		self.step = tuple(step[:])
 		self.boardUI = [[-1 for i in range(self.size[1])] for i in range(self.size[0])]
 		self.characUIDict = {}

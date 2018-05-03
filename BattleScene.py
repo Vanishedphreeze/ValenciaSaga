@@ -10,31 +10,33 @@ import BattleStatus
 from SceneBase import SceneBase
 
 class BattleScene(SceneBase):
-	image = None
-	movingObject = None
+	def __init__(self):
+		super().__init__()
+		self.image = None
+		self.movingObject = None
 
-	# (index, pos, source)
-	# index: index in hand/characDict
-	# pos: original pos on screen
-	# source is the same as _cursorFocus
-	# 1 player1, 2 player2, 3 board
-	movingObjectInfo = None
+		# (index, pos, source)
+		# index: index in hand/characDict
+		# pos: original pos on screen
+		# source is the same as _cursorFocus
+		# 1 player1, 2 player2, 3 board
+		self.movingObjectInfo = None
 
-	status = None
+		self.status = None
 
-	# testObject = GameObject.GameObject()
+		# testObject = GameObject.GameObject()
 
-	cursorImage = None
-	cursor = GameObject.GameObject()
+		self.cursorImage = None
+		self.cursor = GameObject.GameObject()
 
-	player1Hand = PlayerUI.PlayerUI()
-	player2Hand = PlayerUI.PlayerUI()
-	boardUI = BoardUI.BoardUI()
+		self.player1Hand = PlayerUI.PlayerUI()
+		self.player2Hand = PlayerUI.PlayerUI()
+		self.boardUI = BoardUI.BoardUI()
 
-	_cursorFocus = 0
-	# 0 lost focus, 1 player1, 2 player2, 3 board
+		self._cursorFocus = 0
+		# 0 lost focus, 1 player1, 2 player2, 3 board
 
-	dpos = None
+		dpos = None
 
 	def init(self):
 		super().init()

@@ -7,17 +7,19 @@ import BoardUI
 from SceneBase import SceneBase
 
 class TestScene(SceneBase):
-	image = None
-	movingObject = None
-	# (index, pos)
-	movingObjectInfo = None
+	def __init__(self):
+		super().__init__()
+		self.image = None
+		self.movingObject = None
+		# (index, pos)
+		self.movingObjectInfo = None
 
-	cursorImage = None
-	cursor = GameObject.GameObject()
+		self.cursorImage = None
+		self.cursor = GameObject.GameObject()
 
-	boardUI = BoardUI.BoardUI()
+		self.boardUI = BoardUI.BoardUI()
 
-	dpos = None
+		self.dpos = None
 
 	def init(self):
 		super().init()

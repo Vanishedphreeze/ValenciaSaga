@@ -7,24 +7,26 @@ import BattleManager
 class BattleCore(object):
 	# player 
 	MAX_PLAYER = 2
-	playerList = None 
-	board = None
-	_battleStatus = None
 
-	# the count of turns, initial 0.
-	_turn = 0
+	def __init__(self):
+		self.playerList = None 
+		self.board = None
+		self._battleStatus = None
 
-	# phase: 
-	# 0 draw phase, 
-	# 1 standby phase, 
-	# 2 main phase,
-	# 3 end phase.
-	_phase = 0
-	_curPlayer = 0
-	_isStarted = False
+		# the count of turns, initial 0.
+		self._turn = 0
 
-	# to help controlling battle coroutine
-	battleHandler = None
+		# phase: 
+		# 0 draw phase, 
+		# 1 standby phase, 
+		# 2 main phase,
+		# 3 end phase.
+		self._phase = 0
+		self._curPlayer = 0
+		self._isStarted = False
+
+		# to help controlling battle coroutine
+		self.battleHandler = None
 
 	# all these phases are coroutines
 	# yield returns required type of opts 

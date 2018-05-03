@@ -3,8 +3,9 @@ from CharacterBase import CharacterBase
 from Player import Player
 
 class BattleManager(object):
-	_boardInstance = None
-	_playerList = None
+	def __init__(self):
+		self._boardInstance = None
+		self._playerList = None
 
 	# BattleManager should load after board and players
 	# player should not change during one match
@@ -68,6 +69,11 @@ class BattleManager(object):
 		# dead processes should be in event system
 		# this is only a physical attack
 		target.status["HP"] -= attacker.status["ATK"] - target.status["DEF"]
+
+		# character dead
+		if target.status["HP"] <= 0:
+			self._boardInstance.removeCharac(targetPos)
+
 		return True
 		# return self._boardInstance.moveCharac(pos, targetPos)
 

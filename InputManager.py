@@ -1,10 +1,11 @@
 class InputManager(object):
-	isMouseKeyPress = None
-	isMouseKeyDown = None
-	isMouseKeyUp = None
-	mousePos = None
-	mouseRel = None
-	# 1~5: l, mid, r, u, d
+	def __init__(self):
+		self.isMouseKeyPress = None
+		self.isMouseKeyDown = None
+		self.isMouseKeyUp = None
+		self.mousePos = None
+		self.mouseRel = None
+		# 1~5: l, mid, r, u, d
 
 	def init(self):
 		isMouseKeyPress = [0 for i in range(6)]

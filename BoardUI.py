@@ -5,17 +5,18 @@ import Board
 import pygame
 
 class BoardUI(object):
-	characterImage = None
-	startPos = None
-	_endPos = None
-	size = None # n * m
-	step = None
+	def __init__(self):
+		self.characterImage = None
+		self.startPos = None
+		self._endPos = None
+		self.size = None # n * m
+		self.step = None
 
-	boardUI = None
-    # index : (pos, character)
-	characUIDict = None
+		self.boardUI = None
+	    # index : (pos, character)
+		self.characUIDict = None
 
-	logicBoardHandler = None
+		self.logicBoardHandler = None
 
 	# intend to pass value
 

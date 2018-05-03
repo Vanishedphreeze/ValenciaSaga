@@ -1,4 +1,5 @@
 class EventManager(object):
+
 	def __init__(self):
 		self._event = {}
 
@@ -23,6 +24,4 @@ class EventManager(object):
 
 	def call(self, event, *args):
 		for func in self._event[event]:
-			func(*args)
-
-instance = EventManager()
+			func(args)

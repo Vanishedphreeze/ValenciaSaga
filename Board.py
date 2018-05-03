@@ -7,13 +7,15 @@ class Board(object):
 	
 	HEIGHT = 5
 	WIDTH = 10
-	board = None
 
-	# index : (pos, character)
-	characDict = None
+	def __init__(self):
+		self.board = None
 
-	# index++ when charater inserted into dict
-	_index = 0
+		# index : (pos, character)
+		self.characDict = None
+
+		# index++ when charater inserted into dict
+		self._index = 0
 
 	def init(self):
 		self.board = [[-1 for i in range(Board.WIDTH)] for i in range(Board.HEIGHT)]

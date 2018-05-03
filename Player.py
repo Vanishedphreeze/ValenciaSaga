@@ -4,11 +4,12 @@ import CharacterBase
 class Player(object):
 	# index will get a number when BattleCore Init
 	MAXHAND = 7
-	index = None
 
-	hand = None
-	deck = None
-	# onBoardCharacter = None
+	def __init__(self):
+		self.index = None
+		self.hand = None
+		self.deck = None
+		# onBoardCharacter = None
 
 	def init(self, index):
 		self.index = index

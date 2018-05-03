@@ -2,23 +2,25 @@ import GameObject
 from SceneBase import SceneBase
 
 class TestScene(SceneBase):
-    '''
-    speed = [-2, 1]
-    originalplayer = None
-    player = None
-    player_pos = None
-    ratio = 1
-    '''
-    image = None
-    player = GameObject.GameObject()
+    def __init__(self):
+        super().__init__()
+        '''
+        self.speed = [-2, 1]
+        self.originalplayer = None
+        self.player = None
+        self.player_pos = None
+        self.ratio = 1
+        '''
+        self.image = None
+        self.player = GameObject.GameObject()
 
-    # operations
-    isPressed = False
-    isClick = False
-    mousepos = None
-    dpos = None
+        # operations
+        self.isPressed = False
+        self.isClick = False
+        self.mousepos = None
+        self.dpos = None
 
-    isDragging = False
+        self.isDragging = False
 
 
     def init(self):

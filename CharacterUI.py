@@ -2,6 +2,9 @@ import pygame
 from GameObject import GameObject
 
 class CharacterUI(GameObject):
+	def __init__(self):
+		super().__init__()
+
 	'''
 	# index on board
 	index = None

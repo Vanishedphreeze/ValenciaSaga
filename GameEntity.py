@@ -8,11 +8,12 @@ class GameEntity(object):
 	FPS = 60
 	WINDOWSIZE = (800, 600)
 
-	_curScene = BattleScene()
+	def __init__(self):
+		self._curScene = BattleScene()
 
-	_windowContext = None
-	_clock = None
-	isRunning = False
+		self._windowContext = None
+		self._clock = None
+		self.isRunning = False
 
 
 	def init(self):

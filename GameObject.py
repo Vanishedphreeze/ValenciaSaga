@@ -1,12 +1,13 @@
 import pygame
 
 class GameObject(object):
-	_originalAvatar = None 
-	_Avatar = None
-	size = None
-	_preSize = None
-	position = None # top left corner
-	# rotation = None
+	def __init__(self):
+		self._originalAvatar = None 
+		self._Avatar = None
+		self.size = None
+		self._preSize = None
+		self.position = None # top left corner
+		# rotation = None
 
 
 	# don't care about value-passing
