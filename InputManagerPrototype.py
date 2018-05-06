@@ -23,6 +23,7 @@ class TestScene(SceneBase):
         self.isDragging = False
 
 
+
     def init(self):
         super().init()
         '''
@@ -36,12 +37,15 @@ class TestScene(SceneBase):
         self.mousepos = [0, 0]
 
 
+
     def start(self):
         super().start()
         '''
         self.player_pos = self.player.get_rect()
         '''
         self.player.start()
+
+
 
     def update(self, events):
         super().update(events)
@@ -94,12 +98,16 @@ class TestScene(SceneBase):
 
         self.player.update()
 
+
+
     def draw(self):
         super().draw()
         '''
         self.screen.blit(self.player, (self.player_pos.left, self.player_pos.top))
         '''
         self.player.draw(self.screen)
+
+
 
     def destroy(self):
         super().destroy()

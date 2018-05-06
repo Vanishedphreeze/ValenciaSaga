@@ -10,6 +10,7 @@ class GameObject(object):
 		# rotation = None
 
 
+
 	# don't care about value-passing
 	def init(self, image, pos, size):
 		'''
@@ -27,15 +28,24 @@ class GameObject(object):
 		self._Avatar = pygame.transform.smoothscale(self._originalAvatar, self.size)
 		# self.rotation = 0
 
+
+
 	# gameObject does not load images, use resource manager.
 	def changeAvatar(self, image):
-		self._avatar = image
+		self._originalAvatar = image
+		self._Avatar = pygame.transform.smoothscale(self._originalAvatar, self.size)
+
+
 
 	def start(self):
 		pass
 
+
+
 	def update(self):
 		pass
+
+
 
 	def draw(self, screen):
 		if not self.size == self._preSize:
@@ -43,6 +53,8 @@ class GameObject(object):
 			self._preSize = list(self.size[:])
 			self._Avatar = pygame.transform.smoothscale(self._originalAvatar, self.size)
 		screen.blit(self._Avatar, self.position)
+
+
 
 	def destroy(self):
 		pass

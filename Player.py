@@ -1,4 +1,5 @@
 import random
+import ResourceManager
 import CharacterBase
 
 class Player(object):
@@ -9,14 +10,23 @@ class Player(object):
 		self.index = None
 		self.hand = None
 		self.deck = None
+		self.mainCharac = None
+		self.isMainCharacOnBoard = False
 		# onBoardCharacter = None
+
+
 
 	def init(self, index):
 		self.index = index
 		self.hand = []
 		self.deck = []
+		templet = ResourceManager.instance.getResourceHandler("MainCharacTemplet")
+		self.mainCharac = CharacterBase.CharacterBase(10, templet)
+		self.mainCharac.owner = index
 		# self.onBoardCharacter = []
 		# load deck shouid be here
+
+
 
 	# draw cards, if len(deck) < n, draw len(deck)
 	def draw(self, n):
@@ -27,6 +37,8 @@ class Player(object):
 				else:
 					self.deck.pop()
 
+
+
 	# Fisher–Yates shuffle algorithm
 	def shuffle(self):
 		i = len(self.deck) - 1
@@ -35,40 +47,56 @@ class Player(object):
 			self.deck[i], self.deck[p] = self.deck[p], self.deck[i]
 			i -= 1
 
+
+
 	# create random deck. only used for testing BattleTest
 	# here charac.poolindex is to check whether shuffle is done
 
-	'''
-	status = {
-		"HP" : 30,
-		"ATK" : 15,
-		"DEF" : 8,
-		"INT" : 15,
-		"RES" : 8,
-		"SPD" : 10,
-		"MOV" : 4,
-		"RNG" : 1
-	}
-	'''
+	# self.status = {
+	# 			"ATK" : 4,
+	# 			"HP" : 4,
+	# 			"MOV" : 2,
+	# 			"RNG" : 1
+	# 		}
+
+
 
 	def createRandDeck(self, n):
 		for i in range(n):
-			temp = CharacterBase.CharacterBase()
+			templetList = ResourceManager.instance.getResourceHandler("CharacTemplet")
+			code = random.randint(0, len(templetList) - 1)
+			temp = CharacterBase.CharacterBase(code, templetList[code])
 
 			# for testing shuffle
 			temp.poolIndex = i
-			
-			# modifying charac data
-			temp.status["HP"] += random.randint(-5, 5)
-			temp.status["ATK"] += random.randint(-2, 2)
-			temp.status["DEF"] += random.randint(-2, 2)
-			temp.status["INT"] += random.randint(-2, 2)
-			temp.status["RES"] += random.randint(-2, 2)
-			temp.status["SPD"] += random.randint(-1, 1)
-			temp.status["RNG"] += random.randint(0, 1)
+			temp.owner = self.index
+
+			characType = random.randint(0, 9)
+			if characType == 0:
+				temp.status["ATK"] += -1
+				temp.status["HP"] += -1
+			elif characType in range(1, 3):
+				temp.status["ATK"] += -1
+				temp.status["HP"] += +1
+			elif characType in range(3, 7):
+				pass
+			elif characType in range(7, 9):
+				temp.status["ATK"] += +1
+				temp.status["HP"] += -1
+			elif characType == 9:
+				temp.status["ATK"] += +1
+				temp.status["HP"] += +1
+
+			# # modifying charac data
+			# temp.status["HP"] += random.randint(-1, 1)
+			# temp.status["ATK"] += random.randint(-1, 1)
+			# temp.status["MOV"] += random.randint(-1, 1)
+			# temp.status["RNG"] += random.randint(0, 1)
+
 
 			# push into deck
 			self.deck.append(temp)
+
 
 
 	def printDeckIndex(self):

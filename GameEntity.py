@@ -1,5 +1,6 @@
 import pygame
 import sys
+import ResourceManager
 from SceneBase import SceneBase
 # from TestScene import TestScene
 from BattleScene import BattleScene
@@ -7,6 +8,8 @@ from BattleScene import BattleScene
 class GameEntity(object):
 	FPS = 60
 	WINDOWSIZE = (800, 600)
+
+
 
 	def __init__(self):
 		self._curScene = BattleScene()
@@ -16,11 +19,15 @@ class GameEntity(object):
 		self.isRunning = False
 
 
+
 	def init(self):
 		# init pygame and window context
 		pygame.init()
 		self._windowContext = pygame.display.set_mode(self.WINDOWSIZE)
 		self._clock = pygame.time.Clock()
+
+		# init game managers
+		ResourceManager.instance.init()
 
 		# load scene， this should be in SceneManager
 		if isinstance(self._curScene, SceneBase) :
@@ -30,6 +37,8 @@ class GameEntity(object):
 			# raise RuntimeError('SceneType mismatch.')
 			print('SceneType mismatch')
 			return False
+
+
 
 	def run(self):
 		self._curScene.start()
@@ -59,10 +68,16 @@ class GameEntity(object):
 		# if the scene should be destroyed...
 		self._curScene.destroy()
 
+
+
 	def destroy(self):
 		self._curScene.destroy()
 
+
+
 	def getWindowContext(self):
 		return self._windowContext
+
+
 
 instance = GameEntity()

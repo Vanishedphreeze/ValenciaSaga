@@ -21,6 +21,8 @@ class TestScene(SceneBase):
 
 		self.dpos = None
 
+
+
 	def init(self):
 		super().init()
 		self.image = pygame.image.load("crop.jpg")
@@ -33,9 +35,12 @@ class TestScene(SceneBase):
 			cUI.init(self.image, self.boardUI.getPosOnScreen(pos), (50, 50))
 
 
+
 	def start(self):
 		super().start()
 		# self.player.start()
+
+
 
 	def update(self, events):
 		super().update(events)
@@ -85,6 +90,8 @@ class TestScene(SceneBase):
 		# self.player.update()
 		self.cursor.update()
 
+
+
 	def draw(self):
 		super().draw()
 		# self.player.draw(self.screen)
@@ -92,6 +99,8 @@ class TestScene(SceneBase):
 		for (index, (pos, cUI)) in self.boardUI.characUIDict.items():
 			cUI.draw(self.screen)
 		self.cursor.draw(self.screen)
+
+
 
 	def destroy(self):
 		super().destroy()

@@ -1,6 +1,7 @@
 import pygame
 import sys
 import GameEntity
+import ResourceManager
 import GameObject
 import CharacterUI
 import BoardUI
@@ -38,8 +39,27 @@ class BattleScene(SceneBase):
 
 		dpos = None
 
+
+
 	def init(self):
 		super().init()
+		# load resources
+		ResourceManager.instance.load("MainCharacTemplet", "json", "MainCharacterTemplet.json")
+		ResourceManager.instance.load("CharacTemplet", "json", "CharacterTemplet.json")
+
+		ResourceManager.instance.load("archer0", "image", "archer0.png")
+		ResourceManager.instance.load("archer1", "image", "archer1.png")
+		ResourceManager.instance.load("athos0", "image", "athos0.png")
+		ResourceManager.instance.load("athos1", "image", "athos1.png")
+		ResourceManager.instance.load("berserker0", "image", "berserker0.png")
+		ResourceManager.instance.load("berserker1", "image", "berserker1.png")
+		ResourceManager.instance.load("cavalier0", "image", "cavalier0.png")
+		ResourceManager.instance.load("cavalier1", "image", "cavalier1.png")
+		ResourceManager.instance.load("knight0", "image", "knight0.png")
+		ResourceManager.instance.load("knight1", "image", "knight1.png")
+
+		self.statusFont = pygame.font.Font(None, 30)
+
 		BattleCore.instance.init()
 		self.status = BattleCore.instance.getBattleStatusHandler()
 		if not isinstance(self.status, BattleStatus.BattleStatus):
@@ -47,6 +67,7 @@ class BattleScene(SceneBase):
 
 		self.image = pygame.image.load("crop.jpg")
 		self.cursorImage = pygame.image.load("cursor.png")
+		# self.cursorImage = ResourceManager.instance.getResourceHandler("EliwoodImage")
 		# self.player.init(self.image, (0, 0), (50, 50))
 		self.cursor.init(self.cursorImage, (50, 50), (50, 50))
 		# self.testObject.init(self.cursorImage, (700, 400), (60, 180))
@@ -72,6 +93,7 @@ class BattleScene(SceneBase):
 		# 	cUI.init(self.image, self.player1Hand.getPosOnScreen(pos), (50, 50))
 
 
+
 	def start(self):
 		super().start()
 		BattleCore.instance.start()
@@ -85,6 +107,8 @@ class BattleScene(SceneBase):
 		self.player1Hand.update()
 		self.player2Hand.update()
 		# self.player.start()
+
+
 
 	def update(self, events):
 		super().update(events)
@@ -279,12 +303,23 @@ class BattleScene(SceneBase):
 		# if self.isClick and not self.isDragging and //inRange//:
 
 		# self.player.update()
+		for (index, (pos, cUI)) in self.boardUI.characUIDict.items():
+			cUI.update()
+
+		for (index, (pos, cUI)) in self.player2Hand.characUIDict.items():
+			cUI.update()
+
+		for (index, (pos, cUI)) in self.player1Hand.characUIDict.items():
+			cUI.update()
+
 		self.cursor.update()
+
+
 
 	def draw(self):
 		super().draw()
 		# self.player.draw(self.screen)
-		# 标号小的在前，能否daoxu遍历
+		# dict uses hash table. this could not control the sequence of rendering
 
 		for (index, (pos, cUI)) in self.boardUI.characUIDict.items():
 			cUI.draw(self.screen)
@@ -297,6 +332,8 @@ class BattleScene(SceneBase):
 
 		self.cursor.draw(self.screen)
 		# self.testObject.draw(self.screen)
+
+
 
 	def destroy(self):
 		super().destroy()

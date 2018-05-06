@@ -40,6 +40,8 @@ class PlayerUI(object):
 		self._endPos = self.startPos[0] + size[0] * step[0], self.startPos[1] + size[1] * step[1]
 	'''
 
+
+
 	def init(self, startPos, step, logicPlayerHandler):
 		self.handImage = pygame.image.load("crop.jpg")
 
@@ -54,6 +56,7 @@ class PlayerUI(object):
 		self.characUIDict = {}
 		self._endPos = self.startPos[0] + self.size[0] * step[0], self.startPos[1] + self.size[1] * step[1]
 		
+
 
 	def getPosOnBoard(self, mousePos):
 		x = int((mousePos[0] - self.startPos[0]) / self.step[0])
@@ -71,10 +74,14 @@ class PlayerUI(object):
 
 		return (x, y)
 
+
+
 	def getPosOnScreen(self, pos):
 		x = pos[0] * self.step[0] + self.startPos[0]
 		y = pos[1] * self.step[1] + self.startPos[1]
 		return (x, y)
+
+
 
 	def moveCharac(self, pos, targetPos):
 		if targetPos[0] < 0 or targetPos[0] >= self.size[0] or targetPos[1] < 0 or targetPos[1] >= self.size[1]:
@@ -91,8 +98,12 @@ class PlayerUI(object):
 
 		return True
 
+
+
 	def isPosOnBoard(self, pos):
 		return pos[0] in range(self.startPos[0], self._endPos[0]) and pos[1] in range(self.startPos[1], self._endPos[1])
+
+
 
 	'''
 	# this func doesn't check n!
@@ -107,6 +118,8 @@ class PlayerUI(object):
 				# print(pos)
 	'''
 
+
+
 	# ensure that the index in logic is the same in UI  
 	# this is not the best solution, optimize it if necessary
 	def update(self):
@@ -119,6 +132,7 @@ class PlayerUI(object):
 		# use CharacterUI pool if necessary
 		for i in range(len(self.logicPlayerHandler.hand)):
 			self.characUIDict[i] = [(i, 0), CharacterUI.CharacterUI()]
-			self.characUIDict[i][1].init(self.handImage, self.getPosOnScreen((i, 0)), (50, 50))
+			self.characUIDict[i][1].init(self.logicPlayerHandler.hand[i].type, self.logicPlayerHandler.hand[i].owner, self.getPosOnScreen((i, 0)), (50, 50))
+			self.characUIDict[i][1].setStatus(self.logicPlayerHandler.hand[i].status["ATK"], self.logicPlayerHandler.hand[i].status["HP"])
 
 

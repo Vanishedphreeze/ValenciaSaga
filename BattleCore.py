@@ -28,6 +28,8 @@ class BattleCore(object):
 		# to help controlling battle coroutine
 		self.battleHandler = None
 
+
+
 	# all these phases are coroutines
 	# yield returns required type of opts 
 	# use battleHandler.send()
@@ -38,11 +40,14 @@ class BattleCore(object):
 		# process all effects in queue
 
 		# draw a card
-		for player in self.playerList:
-			player.draw(1)
+		# for player in self.playerList:
+		# 	player.draw(1)
+		self.playerList[self._curPlayer].draw(1)
 
 		recvOpt = yield None
 		print("draw phase end.")
+
+
 
 	def _standbyPhase(self):
 		self._phase = 1
@@ -52,6 +57,8 @@ class BattleCore(object):
 
 		recvOpt = yield None
 		print("standby phase end.")
+
+
 
 	'''
 	def _mainPhase(self):
@@ -87,6 +94,8 @@ class BattleCore(object):
 		print("main phase end.")
 	'''
 
+
+
 	# this function recieves opt once a time, until recieved -1 (turn end)
 	def _mainPhase(self):
 		self._phase = 2
@@ -109,26 +118,32 @@ class BattleCore(object):
 			args = recvOpt[1]
 			print(args)
 			if recvOpt[0] == 0: # summon(playerNo, handIndex, posOnBoard)
-				BattleManager.instance.summon(args[0], args[1], args[2])
-				self.board.printBoard()
+				BattleManager.instance.summon(args[0], args[1], args[2], self._curPlayer)
+				# self.board.printBoard()
 			elif recvOpt[0] == 1: # move(pos, targetPos)
-				BattleManager.instance.move(args[0], args[1])
-				self.board.printBoard()
+				BattleManager.instance.move(args[0], args[1], self._curPlayer)
+				# self.board.printBoard()
 			elif recvOpt[0] == 2: # attack(pos, targetPos)
-				BattleManager.instance.attack(args[0], args[1])
-				self.board.printBoard()
+				BattleManager.instance.attack(args[0], args[1], self._curPlayer)
+				# self.board.printBoard()
 			# is there possible to use something else?
 
-
 		print("main phase end.")
+
+
 
 	def _endPhase(self):
 		self._phase = 3
 		print("end phase start.")
 
 		# process all effects in queue
+
+		# clear all state on board
+		self.board.resetAllMoveState()
+
 		recvOpt = yield None
 		print("end phase end.")
+
 
 
 	# yield from: continuously enum value from one iterator UNTIL it exhausts
@@ -147,6 +162,8 @@ class BattleCore(object):
 			   self._turn += 1
 			   self._curPlayer = 0
 
+
+
 	def init(self):
 		self.battleHandler = self._battleRoutine()
 
@@ -156,7 +173,7 @@ class BattleCore(object):
 			self.playerList.append(Player.Player())
 			self.playerList[-1].init(i)
 		for player in self.playerList:
-			player.createRandDeck(10) # this should be removed
+			player.createRandDeck(10)
 			player.shuffle()
 			# player.printDeckIndex()
 
@@ -171,6 +188,11 @@ class BattleCore(object):
 		for player in self.playerList:
 			player.draw(5)
 
+		# add main character on board.
+		# speciallized. be attention if using in other modes
+		BattleManager.instance.summonMainCharac(0, (2, 2))
+		BattleManager.instance.summonMainCharac(1, (2, 7))
+
 		# after all inits are done
 		self._battleStatus = BattleStatus.BattleStatus(self.playerList, self.board)
 
@@ -184,9 +206,13 @@ class BattleCore(object):
 		next(self.battleHandler) # tell coroutine to start battle
 		return self.pushForward(None) # is this dangerous to push forward here?
 
+
+
 	def getBattleStatusHandler(self):
 		return self._battleStatus
 		
+
+
 	# send operations and continue the battle procedure
 	# returns (type, status)
 	# type: the type of the required operations
@@ -198,6 +224,8 @@ class BattleCore(object):
 			requiredType = self.battleHandler.send(opt) 
 		return requiredType
 
+
+
 	# back door.
 	def showStatusAtPos(self, pos):
 		temp = self.board.getCharacByPos(pos)
@@ -205,17 +233,15 @@ class BattleCore(object):
 			print("Character not exist.")
 		else:
 			print(
-				"Pos(%3d,%3d), index = %d :\nOwner : %d\nHP  : %3d\nATK : %3d\nDEF : %3d\nINT : %3d\nRES : %3d\nSPD : %3d\nMOV : %3d\nRNG : %3d\n"
+				"Pos(%3d,%3d), index = %d :\nOwner : %d\nATK  : %3d\nHP : %3d\nMOV : %3d\nRNG : %3d\n"
 				%(pos[0], pos[1], temp.poolIndex, temp.owner,
-				  temp.status["HP"],
 				  temp.status["ATK"],
-				  temp.status["DEF"],
-				  temp.status["INT"],
-				  temp.status["RES"],
-				  temp.status["SPD"],
+				  temp.status["HP"],
 				  temp.status["MOV"],
 				  temp.status["RNG"]
 				  ) 
 			)
+
+
 
 instance = BattleCore()
