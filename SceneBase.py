@@ -4,7 +4,6 @@ import GameEntity
 
 class SceneBase(object):
 	def __init__(self):
-		self.isRunning = False
 		self.screen = None
 		self.bgColor = (255, 255, 255)
 
@@ -19,7 +18,6 @@ class SceneBase(object):
 	def start(self):
 		# prepare initial values
 		self.screen = GameEntity.instance.getWindowContext()
-		self.isRunning = True
 
 
 

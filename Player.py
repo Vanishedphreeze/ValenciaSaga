@@ -12,6 +12,7 @@ class Player(object):
 		self.deck = None
 		self.mainCharac = None
 		self.isMainCharacOnBoard = False
+		# set true when sommon, false when battle over in BattleCore
 		# onBoardCharacter = None
 
 
@@ -102,3 +103,34 @@ class Player(object):
 	def printDeckIndex(self):
 		for i in self.deck:
 			print(i.poolIndex)
+
+
+	def dump(self):
+		temp = {}
+		temp["index"] = self.index
+		temp["hand"] = []
+		for i in range(len(self.hand)):
+			temp["hand"].append(self.hand[i].dump())
+		temp["deck"] = []
+		for i in range(len(self.deck)):
+			temp["deck"].append(self.deck[i].dump())
+		# temp["mainCharac"] = self.mainCharac.dump()
+		temp["isMainCharacOnBoard"] = self.isMainCharacOnBoard
+		return temp
+
+
+	def load(self, data):
+		self.index = data["index"]
+
+		self.hand = []
+		for i in range(len(data["hand"])):
+			self.hand.append(CharacterBase.CharacterBase.load(data["hand"][i]))
+
+		self.deck = []
+		for i in range(len(data["deck"])):
+			self.deck.append(CharacterBase.CharacterBase.load(data["deck"][i]))
+
+		# fuck this!
+		# self.mainCharac = CharacterBase.CharacterBase.load(data["mainCharac"])
+		self.isMainCharacOnBoard = data["isMainCharacOnBoard"]
+

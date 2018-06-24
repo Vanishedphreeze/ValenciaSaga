@@ -1,8 +1,12 @@
+import json
 import Player
 import CharacterBase
 import Board
 import BattleStatus
 import BattleManager
+import EventManager
+import ResourceManager
+import StatusAccounter
 
 class BattleCore(object):
 	# player 
@@ -125,6 +129,10 @@ class BattleCore(object):
 				# self.board.printBoard()
 			elif recvOpt[0] == 2: # attack(pos, targetPos)
 				BattleManager.instance.attack(args[0], args[1], self._curPlayer)
+				for player in self.playerList:
+					if player.mainCharac.status["HP"] <= 0:
+						player.isMainCharacOnBoard = False
+						EventManager.instance.call("MainCharacDead", player.index)
 				# self.board.printBoard()
 			# is there possible to use something else?
 
@@ -181,6 +189,10 @@ class BattleCore(object):
 		self.board = Board.Board()
 		self.board.init()
 
+		# add an accounter in resource manager
+		ResourceManager.instance.addResource("Accounter", StatusAccounter.StatusAccounter(self.MAX_PLAYER))
+		ResourceManager.instance.getResourceHandler("Accounter").init()
+
 		# bind & init BattleManager
 		BattleManager.instance.init(self.board, tuple(self.playerList))
 
@@ -190,6 +202,7 @@ class BattleCore(object):
 
 		# add main character on board.
 		# speciallized. be attention if using in other modes
+		# attention. first two summoned character, index = 0, 1. this is used in BattleManager.summon  
 		BattleManager.instance.summonMainCharac(0, (2, 2))
 		BattleManager.instance.summonMainCharac(1, (2, 7))
 
@@ -244,4 +257,78 @@ class BattleCore(object):
 
 
 
-instance = BattleCore()
+	def saveStatus(self):
+		savefile = open("savedata.txt", "w")
+		temp = {}
+		temp["playerList"] = []
+		for i in range(len(self.playerList)):
+			temp["playerList"].append(self.playerList[i].dump()) 
+		temp["board"] = self.board.dump()
+
+		# self._battleStatus saves the handler of board and playerList. it is done while init, so this is no need.
+		# the count of turns, initial 0.
+		temp["_turn"] = self._turn
+		temp["_phase"] = self._phase
+		temp["_curPlayer"] = self._curPlayer
+
+		# self._isStarted inited when start.
+		# save can only happened in main phase, so battleHandler is no need.
+
+		savefile.write(json.dumps(temp))
+		savefile.close()
+
+
+	'''
+	def loadStatus(self):
+		self.battleHandler = self._battleRoutine()
+
+		# create players and init
+		self.playerList = []
+		for i in range(self.MAX_PLAYER):
+			self.playerList.append(Player.Player())
+			self.playerList[-1].init(i)
+		for player in self.playerList:
+			player.createRandDeck(10)
+			player.shuffle()
+			# player.printDeckIndex()
+
+		# create board
+		self.board = Board.Board()
+		self.board.init()
+
+		# bind & init BattleManager
+		BattleManager.instance.init(self.board, tuple(self.playerList))
+
+		# draw 5 cards
+		for player in self.playerList:
+			player.draw(5)
+
+		# add main character on board.
+		# speciallized. be attention if using in other modes
+		# attention. first two summoned character, index = 0, 1. this is used in BattleManager.summon  
+		BattleManager.instance.summonMainCharac(0, (2, 2))
+		BattleManager.instance.summonMainCharac(1, (2, 7))
+
+		# after all inits are done
+		self._battleStatus = BattleStatus.BattleStatus(self.playerList, self.board)
+	'''
+
+	def loadStatus(self, file = "savedata.txt"):
+		savefile = open(file, "r")
+		temp = json.loads(savefile.read())
+		# print(temp)
+
+		self.board.load(temp["board"])
+
+		# the number of players should be the same!!!
+		for i in range(len(temp["playerList"])):
+			self.playerList[i].load(temp["playerList"][i])
+			self.playerList[i].mainCharac = self.board.characDict[i][1]
+		
+		self._turn = temp["_turn"]
+		self._phase = temp["_phase"]
+		self._curPlayer = temp["_curPlayer"]
+
+
+
+instance = BattleCore() 

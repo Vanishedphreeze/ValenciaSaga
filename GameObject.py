@@ -60,6 +60,15 @@ class GameObject(object):
 		pass
 
 
+
 	# for some tests
 	def _drawProto(self, screen):
 		screen.blit(self._originalAvatar, self.position)
+
+
+
+	def pointCollide(self, pos):
+		if pos[0] in range(self.position[0], self.position[0] + self.size[0]) and pos[1] in range(self.position[1], self.position[1] + self.size[1]):
+			return True
+		else:
+			return False

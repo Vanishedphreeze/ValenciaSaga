@@ -132,7 +132,7 @@ class PlayerUI(object):
 		# use CharacterUI pool if necessary
 		for i in range(len(self.logicPlayerHandler.hand)):
 			self.characUIDict[i] = [(i, 0), CharacterUI.CharacterUI()]
-			self.characUIDict[i][1].init(self.logicPlayerHandler.hand[i].type, self.logicPlayerHandler.hand[i].owner, self.getPosOnScreen((i, 0)), (50, 50))
+			self.characUIDict[i][1].init(self.logicPlayerHandler.hand[i].ctype, self.logicPlayerHandler.hand[i].owner, self.logicPlayerHandler.hand[i].state, self.getPosOnScreen((i, 0)), (50, 50))
 			self.characUIDict[i][1].setStatus(self.logicPlayerHandler.hand[i].status["ATK"], self.logicPlayerHandler.hand[i].status["HP"])
 
 

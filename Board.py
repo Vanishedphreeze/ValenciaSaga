@@ -104,6 +104,8 @@ class Board(object):
 
 	# def swapCharac(self, pos, dpos):
 	# this function does not judge whether you have reached before.
+	# e.g. move (+1, 0) then (-1, 0)
+	# optimize if necessary
 	def reachable(self, pos, targetPos, maxStep):
 		if pos[0] == targetPos[0] and pos[1] == targetPos[1]:
 			return True
@@ -138,3 +140,24 @@ class Board(object):
 		print("----------------")
 		for i in self.board:
 			print(i)
+
+
+
+	# while dumping into json file, integer in dict's key will turn into string
+	def dump(self):
+		temp = {}
+		temp["board"] = self.board
+		temp["characDict"] = {}
+		for (index, (pos, charac)) in self.characDict.items():
+			temp["characDict"][index] = (pos, charac.dump())
+		temp["_index"] = self._index
+		return temp
+
+
+
+	def load(self, data):
+		self.board = data["board"]
+		self.characDict = {}
+		for (index, (pos, charac)) in data["characDict"].items():
+			self.characDict[int(index)] = [pos, CharacterBase.load(charac)]
+		self._index = data["_index"] 

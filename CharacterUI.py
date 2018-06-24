@@ -13,6 +13,8 @@ class CharacterUI(GameObject):
 		self.hpUIdpos = (35, 35) 
 		self.atkUIdpos = (2, 35)
 		self.type = 0
+		self.owner = 0
+		self.state = 0
 
 	'''
 	# index on board
@@ -29,12 +31,12 @@ class CharacterUI(GameObject):
 
 
 
-	def init(self, imageNo, owner, pos, size):
-		if not isinstance(imageNo, int):
-			print("aaaaaaaaaaaaa")
-
+	def init(self, imageNo, owner, state, pos, size):
 		# 0 berserker, 1 knight, 2 cavalier, 3 sniper, 10 mainCharac
 		# sepciallized
+		self.owner = owner
+		self.state = state
+
 		if imageNo == 0:
 			image = ResourceManager.instance.getResourceHandler("berserker" + str(owner))
 		elif imageNo == 1:
@@ -46,7 +48,7 @@ class CharacterUI(GameObject):
 		elif imageNo == 10:
 			image = ResourceManager.instance.getResourceHandler("athos" + str(owner))
 		else:
-			image = imageNo # delete me
+			print("UILayer: Illegal imageNo")
 
 		super().init(image, pos, size) 
 

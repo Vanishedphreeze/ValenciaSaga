@@ -10,6 +10,7 @@ class ResourceManager(object):
 	def init(self):
 		# load default resources
 		self.loadFont("defaultFont", None, 30)
+		return True
 
 
 
@@ -37,6 +38,14 @@ class ResourceManager(object):
 
 
 
+	def unload(self, rname):
+		if not rname in self._resourceMap:
+			print("Resource Manager: No such Resource.")
+			return None
+		self._resourceMap.pop(rname)
+
+
+
 	def addResource(self, rname, resource):
 		self._resourceMap[rname] = resource
 
@@ -44,7 +53,7 @@ class ResourceManager(object):
 
 	def getResourceHandler(self, rname):
 		if not rname in self._resourceMap:
-			print("Resource Manager: No such Resource.")
+			print("Resource Manager:" + rname + " No such Resource.")
 			return None
 		return self._resourceMap[rname]
 
@@ -52,6 +61,11 @@ class ResourceManager(object):
 
 	def removeResource(self, rname):
 		self._resourceMap.pop(rname)
+
+
+
+	def destroy(self):
+		pass # temporarily
 
 
 

@@ -4,6 +4,11 @@ class EventManager(object):
 
 
 
+	def init(self):
+		pass
+
+
+
 	# event : str 
 	def addEvent(self, event):
 		self._event[event] = set()
@@ -19,7 +24,7 @@ class EventManager(object):
 		if hasattr(func, '__call__'):
 			self._event[event].add(func)
 		else:
-			print("not a function")
+			print("EventManager: not a function")
 
 
 
@@ -27,12 +32,19 @@ class EventManager(object):
 		if hasattr(func, '__call__'):
 			self._event[event].remove(func)
 		else:
-			print("not a function")
+			print("EventManager: not a function")
 
 
 
 	def call(self, event, *args):
 		for func in self._event[event]:
 			func(*args)
+
+
+
+	def destroy(self):
+		pass
+
+
 
 instance = EventManager()

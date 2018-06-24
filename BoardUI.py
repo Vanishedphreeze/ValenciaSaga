@@ -129,7 +129,7 @@ class BoardUI(object):
 		# use CharacterUI pool if necessary
 		for (index, (pos, charac)) in self.logicBoardHandler.characDict.items():
 			self.characUIDict[index] = [[pos[1], pos[0]], CharacterUI.CharacterUI()]
-			self.characUIDict[index][1].init(charac.type, charac.owner, self.getPosOnScreen((pos[1], pos[0])), (50, 50))
+			self.characUIDict[index][1].init(charac.ctype, charac.owner, charac.state, self.getPosOnScreen((pos[1], pos[0])), (50, 50))
 			self.characUIDict[index][1].setStatus(charac.status["ATK"], charac.status["HP"])
 
 

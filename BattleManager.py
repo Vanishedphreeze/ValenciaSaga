@@ -1,6 +1,9 @@
 from Board import Board
 from CharacterBase import CharacterBase
 from Player import Player
+import EventManager
+
+
 
 class BattleManager(object):
 	def __init__(self):
@@ -48,11 +51,21 @@ class BattleManager(object):
 		if self._playerList[playerNo].mainCharac.state > 1:
 			print("Summoned or main character moved")
 			return False
-		
+
+		# judge the summon pos
+		# attention. first two summoned character, index = 0, 1.
+		# if this changed, it will not work.
+		mainCharacPos = self._boardInstance.characDict[playerNo][0]
+		dist = abs(mainCharacPos[0] - posOnBoard[0]) + abs(mainCharacPos[1] - posOnBoard[1])
+		if dist > 1:
+			print("Summoned out of range")
+			return False
+
 		# set main charac, summoned charac's state = 2
 		if self._summon(playerNo, handIndex, posOnBoard):
 			self._playerList[playerNo].mainCharac.state = 2
 			self._boardInstance.getCharacByPos(posOnBoard).state = 2
+			EventManager.instance.call("summons", playerNo, 1)
 			return True
 		else:
 			return False
@@ -74,7 +87,7 @@ class BattleManager(object):
 		tempCharac = self._playerList[playerNo].mainCharac
 		# Beware whether addCharac successful
 		if self._boardInstance.addCharac(posOnBoard, tempCharac):
-			self.isMainCharacOnBoard = True
+			self._playerList[playerNo].isMainCharacOnBoard = True
 			return True
 		else:
 			return False
@@ -164,7 +177,12 @@ class BattleManager(object):
 
 		# is this nessesary to put hpdec into a function?
 		# dead processes should be in event system
+		if target.status["HP"] > attacker.status["ATK"]:
+			tempDamage = attacker.status["ATK"]
+		else:
+			tempDamage = target.status["HP"]
 		target.status["HP"] -= attacker.status["ATK"]
+		EventManager.instance.call("damage", attacker.owner, tempDamage)
 
 		# character dead
 		if target.status["HP"] <= 0:
@@ -176,6 +194,8 @@ class BattleManager(object):
 				attacker.status["HP"] -= target.status["ATK"]
 				if attacker.status["HP"] <= 0:
 					self._boardInstance.removeCharac(pos)
+					EventManager.instance.call("kills", attacker.owner, 1)
+					EventManager.instance.call("deaths", target.owner, 1)
 
 
 		return True
